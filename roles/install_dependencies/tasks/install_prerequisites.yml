@@ -9,20 +9,20 @@
       - software-properties-common
     update_cache: yes
 
-- name: check if rust is installed
-  shell: command -v cargo
-  register: cargo_exists
-  ignore_errors: yes
+- name: Update aptos repo for use for setup script
+  git:
+    repo: "{{ repo }}"
+    dest: "{{ user_dir }}/aptos"
+    version: main
+    update: true
+    force: true
+    recursive: false
 
-- name: install rust
-  when: cargo_exists is failed
-  block:
-    - name: Download Installer
-      get_url:
-        url: https://sh.rustup.rs
-        dest: /tmp/sh.rustup.rs
-        mode: '0755'
-        force: 'yes'
-
-    - name: install rust/cargo
-      shell: /tmp/sh.rustup.rs -y
+- name: Run/update Aptos prep script
+  command: "{{ item }}"
+  args:
+    chdir: "{{ user_dir }}/aptos"
+  with_items:
+    - "./scripts/dev_setup.sh -b"
+  environment:
+    PATH: "{{ path }}"

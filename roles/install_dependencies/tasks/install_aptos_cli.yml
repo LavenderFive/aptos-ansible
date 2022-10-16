@@ -1,24 +1,24 @@
 ---
-- name: Check version of node
+- name: check cli version
   ansible.builtin.shell: "/usr/local/bin/aptos info | jq -r .Result.build_commit_hash"
   register: aptos_version
 
-- name: Build new version & install
+- name: build new version & install
   when: (aptos_version.stdout != cli_version) or (aptos_version.sdtout == "")
   block:
-    - name: Update aptos repo for node install
+    - name: update aptos repo for node install
       git:
         repo: "{{ repo }}"
-        dest: "{{ user_dir }}/source/{{ network }}"
+        dest: "{{ user_dir }}/aptos"
         version: "{{ cli_version }}"
         update: true
         force: true
         recursive: true
 
-    - name: Build aptos and aptos-node
+    - name: build aptos and aptos-node
       command: "{{ item }}"
       args:
-        chdir: "{{ user_dir }}/source/{{ network }}"
+        chdir: "{{ user_dir }}/aptos"
       with_items:
         - "nice -n 15 cargo clean"
         - "nice -n 15 cargo build --package aptos --profile release"
@@ -26,10 +26,10 @@
       environment:
         PATH: "{{ path }}"
 
-    - name: Copy binaries
+    - name: copy binaries
       become: true
       copy:
-        src: "{{ user_dir }}/source/{{ network }}/target/release/{{ item }}"
+        src: "{{ user_dir }}/aptos/target/release/{{ item }}"
         dest: "/usr/local/bin"
         owner: root
         group: root
