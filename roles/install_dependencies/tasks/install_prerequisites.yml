@@ -8,3 +8,21 @@
       - gnupg-agent
       - software-properties-common
     update_cache: yes
+
+- name: check if cargo is installed
+  shell: command -v cargo
+  register: cargo_exists
+  ignore_errors: yes
+
+- name: install rust
+  when: cargo_exists is failed
+  block:
+    - name: Download Installer
+      get_url:
+        url: https://sh.rustup.rs
+        dest: /tmp/sh.rustup.rs
+        mode: '0755'
+        force: 'yes'
+
+    - name: install rust/cargo
+      shell: /tmp/sh.rustup.rs -y
