@@ -1,0 +1,11 @@
+---
+- name: install prerequisites
+  import_tasks: install_prerequisites.yml
+
+- name: install aptos cli
+  import_tasks: install_aptos_cli.yml
+  tags: cli
+
+- name: install docker
+  import_tasks: install_docker.yml
+  tags: docker
