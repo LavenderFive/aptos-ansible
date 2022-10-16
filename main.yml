@@ -2,7 +2,5 @@
 - hosts: '{{ target }}'
   gather_facts: no
   become: true
-  vars_files:
-  - '{{ user_file }}'
   roles:
-    - install
+    - install_dependencies

@@ -9,7 +9,7 @@
       - software-properties-common
     update_cache: yes
 
-- name: check if cargo is installed
+- name: check if rust is installed
   shell: command -v cargo
   register: cargo_exists
   ignore_errors: yes

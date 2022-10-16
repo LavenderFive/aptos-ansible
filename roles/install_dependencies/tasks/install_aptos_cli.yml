@@ -4,13 +4,13 @@
   register: aptos_version
 
 - name: Build new version & install
-  when: (aptos_version.stdout != node_version) or (aptos_version.sdtout == "")
+  when: (aptos_version.stdout != cli_version) or (aptos_version.sdtout == "")
   block:
     - name: Update aptos repo for node install
       git:
         repo: "{{ repo }}"
         dest: "{{ user_dir }}/source/{{ network }}"
-        version: "{{ node_version }}"
+        version: "{{ cli_version }}"
         update: true
         force: true
         recursive: true
