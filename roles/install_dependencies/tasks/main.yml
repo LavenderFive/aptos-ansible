@@ -7,5 +7,6 @@
   tags: cli
 
 - name: install docker
+  become: true
   import_tasks: install_docker.yml
   tags: docker

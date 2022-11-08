@@ -1,10 +1,10 @@
 ---
 - name: check cli version
-  ansible.builtin.shell: "/usr/local/bin/aptos info | jq -r .Result.build_commit_hash"
+  shell: "/usr/local/bin/aptos info | jq -r .Result.build_commit_hash"
   register: aptos_version
 
 - name: build new version & install
-  when: (aptos_version.stdout != cli_version) or (aptos_version.sdtout == "")
+  when: '(aptos_version.stdout != cli_version) or (aptos_version.stdout == "")'
   block:
     - name: update aptos repo for node install
       git:
@@ -38,4 +38,3 @@
       loop:
         - aptos
         - aptos-node
-      notify: Restart aptos-node

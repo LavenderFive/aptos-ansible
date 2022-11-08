@@ -1,5 +1,6 @@
 ---
 - name: install prerequisites
+  become: true
   apt:
     name:
       - apt-transport-https
@@ -16,13 +17,12 @@
     version: main
     update: true
     force: true
-    recursive: false
 
 - name: Run/update Aptos prep script
   command: "{{ item }}"
   args:
     chdir: "{{ user_dir }}/aptos"
   with_items:
-    - "./scripts/dev_setup.sh -b"
+    - "nice -n 15 ./scripts/dev_setup.sh -b"
   environment:
     PATH: "{{ path }}"
