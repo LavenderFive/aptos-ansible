@@ -1,1 +1,39 @@
 ---
+# https://docs.ansible.com/ansible/latest/collections/community/docker/docker_compose_module.html
+
+# 1. check if upgrade needs to happen
+- name: get file info
+  become: true
+  command: 'cat {{ aptos_dir }}/docker-compose.yaml'
+  register: docker
+
+- name: define var
+  set_fact:
+    myvar: '{{ docker.stdout | from_yaml }}'
+
+- debug:
+    var: myvar
+
+- name: upgrade Aptos
+  when: node_version not in myvar.services.validator.image 
+  block:
+    - name: Change image tag
+      become: true
+      lineinfile:
+        path: '{{ aptos_dir }}/docker-compose.yaml'
+        regexp: '^    image: '
+        line: '    image: "${VALIDATOR_IMAGE_REPO:-aptoslabs/validator}:${IMAGE_TAG:-{{ node_version }}}"'
+        state: present
+
+    - name: Pull latest version
+      become: true
+      community.docker.docker_compose:
+        project_src: '/root/.aptos/'
+        recreate: never
+        pull: true
+
+    - name: Restart Docker
+      become: true
+      community.docker.docker_compose:
+        project_src: '/root/.aptos/'
+        state: present
