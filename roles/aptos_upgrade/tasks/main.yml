@@ -3,20 +3,20 @@
 
 # 1. check if upgrade needs to happen
 - name: get file info
-  become: true
-  command: 'cat {{ aptos_dir }}/docker-compose.yaml'
+  command: 'docker ps'
   register: docker
 
 - debug:
-    msg: "Node version has changed, upgrading..."
-  when: node_version not in docker.stdout
+    msg: "Node has already been upgraded, skipping."
+  when: node_version in docker.stdout
 
 - name: upgrade Aptos
   when: node_version not in docker.stdout
   block:
     - name: Upgrade message
       debug:
-          msg: "Node has already been upgraded, skipping."
+        msg: "Node version has changed, upgrading..."
+      when: node_version not in docker.stdout
 
     - name: Change image tag
       become: true
