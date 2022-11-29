@@ -7,16 +7,16 @@
   command: 'cat {{ aptos_dir }}/docker-compose.yaml'
   register: docker
 
-- name: define var
-  set_fact:
-    myvar: '{{ docker.stdout | from_yaml }}'
-
 - debug:
-    var: myvar
+    msg: "Node version has changed, upgrading..."
+  when: node_version not in docker.stdout
 
 - name: upgrade Aptos
-  when: node_version not in myvar.services.validator.image 
+  when: node_version not in docker.stdout
   block:
+    - name: Upgrade message
+      debug:
+          msg: "Node has already been upgraded, skipping."
     - name: Change image tag
       become: true
       lineinfile:
@@ -28,12 +28,12 @@
     - name: Pull latest version
       become: true
       community.docker.docker_compose:
-        project_src: '/root/.aptos/'
+        project_src: '{{ aptos_dir }}'
         recreate: never
         pull: true
 
     - name: Restart Docker
       become: true
       community.docker.docker_compose:
-        project_src: '/root/.aptos/'
+        project_src: '{{ aptos_dir }}'
         state: present
