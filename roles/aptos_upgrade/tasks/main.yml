@@ -26,14 +26,12 @@
         state: present
 
     - name: Pull latest version
-      become: true
       community.docker.docker_compose:
         project_src: '{{ aptos_dir }}'
         recreate: never
         pull: true
 
     - name: Restart Docker
-      become: true
       community.docker.docker_compose:
         project_src: '{{ aptos_dir }}'
         state: present
