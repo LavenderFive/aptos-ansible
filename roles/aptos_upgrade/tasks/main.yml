@@ -17,6 +17,7 @@
     - name: Upgrade message
       debug:
           msg: "Node has already been upgraded, skipping."
+
     - name: Change image tag
       become: true
       lineinfile:
