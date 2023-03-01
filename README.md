@@ -1,7 +1,9 @@
 # aptos-ansible
 Ansible playbook for Aptos nodes and validators. This playbook is intended for node runners who utilize
 docker, however it does also install aptos cli for those who may want it installed. Note also it makes no
-assumptions about how many resources should be allocated to docker - it'll eat as much as it wants.
+assumptions about how many resources should be allocated to docker - it'll eat as much as it wants. 
+
+**Assumes you are NOT using root**
 
 ## Installation
 
