@@ -8,6 +8,7 @@
       - curl 
       - gnupg-agent
       - software-properties-common
+      - apparmor-utils
     update_cache: yes
 
 - name: Update aptos repo for use for setup script
