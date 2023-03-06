@@ -15,6 +15,7 @@
         - docker-ce
         - docker-ce-cli
         - containerd.io
+        - docker-compose-plugin
       update_cache: yes
 
   - name: add user permissions
