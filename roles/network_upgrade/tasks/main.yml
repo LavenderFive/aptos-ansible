@@ -25,14 +25,3 @@
         regexp: '^    image: '
         line: '    image: "${VALIDATOR_IMAGE_REPO:-aptoslabs/validator}:${IMAGE_TAG:-{{ node_version }}}"'
         state: present
-
-    - name: Pull latest version
-      community.docker.docker_compose:
-        project_src: '{{ aptos_dir }}'
-        recreate: never
-        pull: true
-
-    - name: Restart Docker
-      community.docker.docker_compose:
-        project_src: '{{ aptos_dir }}'
-        state: present

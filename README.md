@@ -1,13 +1,14 @@
 # aptos-ansible
-Ansible playbook for Aptos nodes and validators. This playbook is intended for node runners who utilize
+Ansible playbook for Aptos public nodes. This playbook is intended for node runners who utilize
 docker, however it does also install aptos cli for those who may want it installed. Note also it makes no
-assumptions about how many resources should be allocated to docker - it'll eat as much as it wants. 
+assumptions about how many resources should be allocated to docker - it'll eat as much as it wants. This
+is not intended to be used to fully setup a validator or full node, but to help initiate the process.
 
 **Assumes you are NOT using root**
 
 ## Installation
 
-### Pre reqs
+### Pre requirements
 
 #### ansible.community.docker
 [Requires installation](https://docs.ansible.com/ansible/latest/collections/community/docker/docker_container_module.html#ansible-collections-community-docker-docker-container-module) of `ansible.community.docker`. 
@@ -26,9 +27,9 @@ ansible-galaxy collection list
 ## Usage
 
 ### main.yml playbook
-This will do the initial setup and installation of a node. Note that it will *NOT* download the required 
-files from the aptos core repo (yet!). Once this has been run, you will need to manually download and set
-up the various files needed.
+This will do the initial setup and installation of a public node. Note that it will *NOT* download the required 
+files from the aptos core repository, but instead utilizes local files. Once this has been run, you will need to 
+manually download and set up the various files needed.
 
 #### 1. copy inventory.yml.example
 The inventory is the `rosetta stone` of the playbook. Copy over the example and fill in your variables.
@@ -44,7 +45,7 @@ checked into version control. For that reason, it is in .gitignore.
 ansible-playbook main.yml -e target=aptos_mainnet
 ```
 
-This will install dependencies (aptos cli, docker, python, etc.) on all machines outlined in `inventory.yml`.
+This will install dependencies (aptos cli, docker, python, etc.) on the target machine.
 
 ### network_upgrade.yml playbook
 This will:

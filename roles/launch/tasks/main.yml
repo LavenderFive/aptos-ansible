@@ -1,0 +1,12 @@
+---
+# https://docs.ansible.com/ansible/latest/collections/community/docker/docker_compose_module.html
+- name: Pull latest version
+  community.docker.docker_compose:
+    project_src: '{{ aptos_dir }}'
+    recreate: never
+    pull: true
+
+- name: Restart Docker
+  community.docker.docker_compose:
+    project_src: '{{ aptos_dir }}'
+    state: present

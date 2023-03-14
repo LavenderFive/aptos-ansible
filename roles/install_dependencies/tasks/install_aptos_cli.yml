@@ -1,19 +1,28 @@
 ---
 - name: check cli version
-  shell: "/usr/local/bin/aptos info | jq -r .Result.build_commit_hash"
+  shell: "/usr/local/bin/aptos -V"
   register: aptos_version
 
 - name: build new version & install
-  when: '(aptos_version.stdout != cli_version) or (aptos_version.stdout == "")'
+  when: '(aptos_cli_version not in aptos_version.stdout) or (aptos_version.stdout == "")'
   block:
     - name: update aptos repo for node install
       git:
         repo: "{{ repo }}"
         dest: "{{ user_dir }}/aptos"
-        version: "{{ cli_version }}"
+        version: "{{ aptos_cli_branch }}"
         update: true
         force: true
         recursive: true
+
+    - name: Run/update Aptos prep script
+      command: "{{ item }}"
+      args:
+        chdir: "{{ user_dir }}/aptos"
+      with_items:
+        - "nice -n 15 ./scripts/dev_setup.sh -b"
+      environment:
+        PATH: "{{ path }}"
 
     - name: build aptos and aptos-node
       command: "{{ item }}"

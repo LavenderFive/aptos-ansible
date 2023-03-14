@@ -18,8 +18,13 @@
         - docker-compose-plugin
       update_cache: yes
 
-  - name: add user permissions
+  - name: add user permissions for docker
+    become: true
     shell: "usermod -aG docker {{ ansible_user }}"
+
+  - name: add user permissions for docker
+    become: true
+    shell: "gpasswd -a {{ ansible_user }} docker"
 
   - name: Reset ssh connection for changes to take effect
     meta: "reset_connection"

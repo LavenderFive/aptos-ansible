@@ -1,71 +1,39 @@
 ---
-- name: Check if node has been initialized
-  stat:
+- name: Create chain folder if it does not exist
+  file:
     path: "{{ aptos_dir }}"
-  register: node_initialized
+    state: directory
+    mode: "0755"
 
-- name: Initialize node
-  when: not node_initialized.stat.exists
-  block:
-    - name: Create chain folder if it does not exist
-      file:
-        path: "{{ aptos_dir }}"
-        state: directory
-        mode: "0755"
+- name: Pull waypoint.txt
+  get_url:
+    url: "{{ waypoint }}"
+    dest: "{{ aptos_dir }}/waypoint.txt"
+    mode: "0644"
 
-    - name: Pull waypoint.txt
-      get_url:
-        url: "{{ waypoint }}"
-        dest: "{{ aptos_dir }}/waypoint.txt"
-        mode: "0644"
+- name: Pull genesis.blob
+  get_url:
+    url: "{{ genesis }}"
+    dest: "{{ aptos_dir }}/genesis.blob"
+    mode: "0644"
 
-    - name: Pull genesis.blob
-      get_url:
-        url: "{{ genesis_blob }}"
-        dest: "{{ aptos_dir }}/genesis.blob"
-        mode: "0644"
+- name: Copy fullnode.yaml
+  copy:
+    src: "files/public-fullnode.yaml"
+    dest: "{{ aptos_dir }}/fullnode.yaml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0600"
+  when: role == "pfn"
 
-    - name: Copy appropriate config file
-      template:
-        src: "{{ aptos_role }}.j2"
-        dest: "{{ aptos_dir }}/{{ aptos_role }}.yaml"
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-        mode: "0600"
-
-    - name: Create keys directory
-      file:
-        path: "{{ user_dir }}/{{ folder }}/keys"
-        state: directory
-        mode: "0755"
-      when: (aptos_role == "validator") or (aptos_role == "vfn")
-
-    - name: Copy VFN identity file
-      copy:
-        src: "{{ group_names[0] }}/validator-full-node-identity.yaml"
-        dest: "{{ user_dir }}/{{ folder }}/keys/validator-full-node-identity.yaml"
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-        mode: "0600"
-      when: aptos_role == "vfn"
-
-    - name: Copy Validator identity file
-      copy:
-        src: "{{ group_names[0] }}/validator-identity.yaml"
-        dest: "{{ user_dir }}/{{ folder }}/keys/validator-identity.yaml"
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-        mode: "0600"
-      when: aptos_role == "validator"
-
-- name: Open p2p port for validator
-  when: aptos_role == "validator"
-  become: true
-  ufw:
-    rule: allow
-    proto: tcp
-    port: "{{ item }}"
-  with_items: p2p_port_validator
+- name: Copy docker-compose.yaml
+  template:
+    src: "docker-compose-fullnode.yaml.j2"
+    dest: "{{ aptos_dir }}/docker-compose.yaml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0600"
+  when: role == "pfn"
 
 - name: Open p2p port for full nodes
   become: true
@@ -73,7 +41,7 @@
     rule: allow
     proto: tcp
     port: "{{ p2p_port_fn }}"
-  when: aptos_role != "validator"
+  when: role != "validator"
 
 - name: Open api port
   become: true
@@ -81,4 +49,4 @@
     rule: allow
     proto: tcp
     port: "{{ api_port }}"
-  when: (aptos_role == "vfn") or (aptos_role == "pfn")
+  when: (role == "vfn") or (role == "pfn")

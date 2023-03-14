@@ -2,4 +2,5 @@
 - hosts: '{{ target }}'
   gather_facts: no
   roles:
-    - aptos_upgrade
+    - network_upgrade
+    - launch

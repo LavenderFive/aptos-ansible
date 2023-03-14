@@ -1,0 +1,31 @@
+base:
+  role: "full_node"
+  data_dir: "/opt/aptos/data"
+  waypoint:
+    from_file: "/opt/aptos/genesis/waypoint.txt"
+
+execution:
+  genesis_file_location: "/opt/aptos/genesis/genesis.blob"
+
+full_node_networks:
+    - discovery_method: "onchain"
+      # The network must have a listen address to specify protocols. This runs it locally to
+      # prevent remote, incoming connections.
+      listen_address: "/ip4/127.0.0.1/tcp/6180"
+      network_id: "public"
+      # Define the upstream peers to connect to
+      seeds:
+        {}
+
+state_sync:
+  data_streaming_service:
+    max_concurrent_requests: 10
+  storage_service:
+    max_transaction_output_chunk_size: 5000
+  state_sync_driver:
+      bootstrapping_mode: DownloadLatestStates
+      continuous_syncing_mode: ApplyTransactionOutputs
+
+api:
+    enabled: true
+    address: 127.0.0.1:8080
