@@ -41,12 +41,17 @@ ansible-galaxy collection list
 ## Usage
 
 ### main.yml playbook
-This will do the initial setup and installation of a public node. Note that it will *NOT* download the required 
-files from the aptos core repository, but instead utilizes local files. Once this has been run, you will need to 
-manually download and set up the various files needed.
+This is intended for **public full nodes**. Validators and Validator-full-nodes may come later.
+
+On the target machine, this will:
+1. install all dependencies including python, docker, and Aptos cli
+2. download and setup the public full node configs
+3. launch/begin syncing the public full node
+
+Note that it will *NOT* download the required files from the aptos core repository, but instead utilizes local files. 
 
 #### 1. copy inventory.yml.example
-The inventory is the `rosetta stone` of the playbook. Copy over the example and fill in your variables.
+The inventory file is the `rosetta stone` of the playbook. Copy over the example and fill in your variables.
 
 ```sh
 mv inventory.yml.example inventory.yml
@@ -54,17 +59,18 @@ mv inventory.yml.example inventory.yml
 **Warning:** Due to the sensitive nature of this file, it should **NEVER** be exposed publicly, or
 checked into version control. For that reason, it is in .gitignore.
 
-#### 2. install dependencies
+#### 2. run playbook
 ```sh
 ansible-playbook main.yml -e target=aptos_mainnet
 ```
 
-This will install dependencies (aptos cli, docker, python, etc.) on the target machine.
+After this, the public node should be syncing.
 
 ### network_upgrade.yml playbook
 This will:
 
 1. check if the node is already at the appropriate version
+2. if it's not on the correct version, upgrade to latest
 2. download the latest docker image
 3. restart the process with the newest image
 
@@ -72,7 +78,7 @@ Note how steps 2 and 3 are separate, as this is *KEY* to upgrading without missi
 them in a single step will result in ~5 minutes of down time.
 
 #### 1. update node_version
-For the desired network type (mainnet, testnet, previewnet), write over the `node_version` variable.
+For the desired network type (mainnet, testnet, previewnet), write over the `node_version` variable in `inventory.yml`.
 
 #### 2. run network_upgrade.yml
 ```sh
