@@ -8,7 +8,21 @@ is not intended to be used to fully setup a validator or full node, but to help 
 
 ## Installation
 
-### Pre requirements
+### Pre-reqs
+
+#### server setup
+This is **NOT** intended to securely set up your server, and assumes you already have. If you would like an
+initial pass at server setup (including firewalls), try out our [server-setup ansible playbook](https://github.com/LavenderFive/secure-server-setup-ansible). 
+
+This playbook will open the required ports for peering, and open ports for API if you're using a public node or
+validator-full-node. It keeps the port closed for validators.
+
+#### ansible
+[Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) must be installed locally.
+If you have python installed, it should be as easy as:
+```sh
+python3 -m pip install --user ansible
+```
 
 #### ansible.community.docker
 [Requires installation](https://docs.ansible.com/ansible/latest/collections/community/docker/docker_container_module.html#ansible-collections-community-docker-docker-container-module) of `ansible.community.docker`. 
