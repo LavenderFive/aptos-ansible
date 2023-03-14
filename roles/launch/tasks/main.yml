@@ -10,3 +10,7 @@
   community.docker.docker_compose:
     project_src: '{{ aptos_dir }}'
     state: present
+  register: docker_output
+
+- debug:
+    var: docker_output
