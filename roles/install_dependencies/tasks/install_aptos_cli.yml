@@ -2,6 +2,7 @@
 - name: check cli version
   shell: "/usr/local/bin/aptos -V"
   register: aptos_version
+  ignore_errors: true
 
 - name: build new version & install
   when: '(aptos_cli_version not in aptos_version.stdout) or (aptos_version.stdout == "")'
