@@ -1,13 +1,13 @@
 services:
-  fullnode:
+  validator:
     image: "${VALIDATOR_IMAGE_REPO:-aptoslabs/validator}:${IMAGE_TAG:-{{ node_version }}}"
     volumes:
       - type: volume
         source: aptos-fullnode
         target: /opt/aptos/data
       - type: bind
-        source: ./fullnode.yaml
-        target: /opt/aptos/etc/fullnode.yaml
+        source: ./validator.yaml
+        target: /opt/aptos/etc/validator.yaml
       - type: bind
         source: ./genesis.blob
         target: /opt/aptos/genesis/genesis.blob
@@ -15,12 +15,13 @@ services:
         source: ./waypoint.txt
         target: /opt/aptos/genesis/waypoint.txt
       - type: bind
-        source: ./keys/validator-full-node-identity.yaml
-        target: /opt/aptos/genesis/validator-full-node-identity.yaml
-    command: ["/usr/local/bin/aptos-node", "-f", "/opt/aptos/etc/fullnode.yaml"]
+        source: ./keys/validator-identity.yaml
+        target: /opt/aptos/genesis/validator-identity.yaml
+    command: ["/usr/local/bin/aptos-node", "-f", "/opt/aptos/etc/validator.yaml"]
     restart: unless-stopped
     ports:
-      - "6182:6182"
+      - "6180:6180"
+      - "6181:6181"
       - "{{ ansible_host }}:8081:8080"
       - "{{ ansible_host }}:9101:9101"
     logging:
